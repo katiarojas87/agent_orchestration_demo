@@ -1,0 +1,27 @@
+{
+  "requirement_id": "REQ-ATO-014",
+  "status": "approved",
+  "trace": {
+    "tests": [
+      "TC-ATO-014-01",
+      "TC-ATO-014-02",
+      "TC-ATO-014-03",
+      "TC-ATO-014-04",
+      "TC-ATO-014-05"
+    ],
+    "executions": [
+      "EXEC-ATO-014-001",
+      "EXEC-ATO-014-003",
+      "EXEC-ATO-014-004",
+      "EXEC-ATO-014-005"
+    ],
+    "defects": [
+      "DEF-ATO-014-001"
+    ]
+  },
+  "gaps": [
+    "TC-ATO-014-02 has no recorded execution."
+  ],
+  "narrative": "REQ-ATO-014: approved. REQ-APP-027: approved. Executions recorded for all executed scenarios.",
+  "last_synced": "2026-08-10T16:00:00Z"
+}

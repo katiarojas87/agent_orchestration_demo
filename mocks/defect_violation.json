@@ -1,0 +1,19 @@
+{
+  "defect_id": "DEF-ATO-014-001",
+  "execution_id": "EXEC-ATO-014-004",
+  "test_id": "TC-ATO-014-04",
+  "requirement_id": "REQ-ATO-014",
+  "acceptance_criteria_id": "AC-3",
+  "classification": "functional",
+  "severity_suggestion": "high",
+  "root_cause_hypotheses": [
+    {
+      "hypothesis": "Retrying step-up authentication resets the timeout timer.",
+      "confidence": "",
+      "evidence_ref": ""
+    }
+  ],
+  "duplicate_of": null,
+  "pattern_flag": null,
+  "status": "needs_human_review"
+}

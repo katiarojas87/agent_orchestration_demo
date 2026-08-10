@@ -1,0 +1,6 @@
+{
+  "intake_id": "INTAKE-2026-07-18-004",
+  "title": "ATO following device change — OTP bypass",
+  "reported_at": "2026-07-18T14:22:00Z",
+  "raw_text": "Incident INTAKE-2026-07-18-004: Customer reported unauthorized transfer of EUR 4,200 at 11:47 local time. Investigation shows the customer changed their registered mobile phone number at 10:17 the same morning — a 90-minute gap before the payment. The transfer completed after a single SMS OTP with no step-up authentication despite the recent device/phone change. Policy team notes that transfers should require additional authentication when a device or phone number change occurred within the last 24 hours. Additional authentication means a push notification to the previously registered device or an in-branch verification — SMS OTP alone is not sufficient in that window. If step-up authentication fails or times out after 120 seconds, the transfer must be held and the customer notified; retrying must not reset the timeout window."
+}

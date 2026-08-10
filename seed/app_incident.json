@@ -1,0 +1,6 @@
+{
+  "intake_id": "INTAKE-2026-08-02-011",
+  "title": "Application fraud — velocity on new accounts",
+  "reported_at": "2026-08-02T09:05:00Z",
+  "raw_text": "Incident INTAKE-2026-08-02-011: Three new retail accounts opened within 48 hours from the same IP block submitted loan applications exceeding EUR 50,000 each. Manual review flagged matching employment details across applications. Risk policy states that more than two loan applications from the same IP within 72 hours must trigger enhanced due diligence before approval. Enhanced due diligence includes document re-verification and a manual analyst review — automated approval is not permitted until EDD completes."
+}

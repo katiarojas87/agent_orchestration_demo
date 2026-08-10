@@ -1,0 +1,17 @@
+[
+  {
+    "requirement_id": "REQ-APP-027",
+    "status": "draft",
+    "derived_from": "INTAKE-2026-08-02-011",
+    "statement": "More than two loan applications from the same IP within 72 hours must trigger enhanced due diligence before approval.",
+    "acceptance_criteria": [
+      {
+        "id": "AC-1",
+        "text": "A third loan application from the same IP within 72 hours is blocked from automated approval.",
+        "source_ref": "more than two loan applications from the same IP within 72 hours must trigger enhanced due diligence before approval"
+      }
+    ],
+    "open_questions": [],
+    "possible_duplicates": []
+  }
+]

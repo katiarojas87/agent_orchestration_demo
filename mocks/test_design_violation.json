@@ -1,0 +1,17 @@
+[
+  {
+    "test_id": "TC-ATO-014-05",
+    "requirement_id": "REQ-ATO-014",
+    "acceptance_criteria_id": "AC-99",
+    "type": "positive",
+    "preconditions": "Customer changed email address and initiates large purchase.",
+    "steps": [
+      "Change registered email address.",
+      "Initiate purchase above EUR 10,000.",
+      "Verify the system also detects an email change plus a large purchase."
+    ],
+    "test_data_spec": "Synthetic customer ID CUST-SYN-099; email change plus EUR 10000 purchase.",
+    "expected_result": "System flags email change combined with large purchase for review.",
+    "priority": "high"
+  }
+]

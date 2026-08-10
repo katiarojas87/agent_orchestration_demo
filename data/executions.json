@@ -1,0 +1,54 @@
+[
+  {
+    "execution_id": "EXEC-ATO-014-001",
+    "test_id": "TC-ATO-014-01",
+    "requirement_id": "REQ-ATO-014",
+    "acceptance_criteria_id": "AC-1",
+    "status": "passed",
+    "expected_result": "Transfer is held until push notification or in-branch verification completes successfully.",
+    "actual_result": "Transfer is held until push notification or in-branch verification completes successfully.",
+    "evidence": {
+      "logs_ref": "EXEC-ATO-014-001:logs:pass",
+      "timestamps": "2026-08-10T15:30:00Z"
+    }
+  },
+  {
+    "execution_id": "EXEC-ATO-014-003",
+    "test_id": "TC-ATO-014-03",
+    "requirement_id": "REQ-ATO-014",
+    "acceptance_criteria_id": "AC-1",
+    "status": "passed",
+    "expected_result": "Transfer proceeds with standard authentication only; no step-up required outside the 24-hour window.",
+    "actual_result": "Transfer proceeds with standard authentication only; no step-up required outside the 24-hour window.",
+    "evidence": {
+      "logs_ref": "EXEC-ATO-014-003:logs:pass",
+      "timestamps": "2026-08-10T15:30:00Z"
+    }
+  },
+  {
+    "execution_id": "EXEC-ATO-014-005",
+    "test_id": "TC-ATO-014-05",
+    "requirement_id": "REQ-ATO-014",
+    "acceptance_criteria_id": "AC-2",
+    "status": "passed",
+    "expected_result": "Transfer proceeds after successful step-up authentication within the timeout window.",
+    "actual_result": "Transfer proceeds after successful step-up authentication within the timeout window.",
+    "evidence": {
+      "logs_ref": "EXEC-ATO-014-005:logs:pass",
+      "timestamps": "2026-08-10T15:30:00Z"
+    }
+  },
+  {
+    "execution_id": "EXEC-ATO-014-004",
+    "test_id": "TC-ATO-014-04",
+    "requirement_id": "REQ-ATO-014",
+    "acceptance_criteria_id": "AC-2",
+    "status": "failed",
+    "expected_result": "Transfer remains held after timeout; customer notified; retry does not reset the 120-second timeout window.",
+    "actual_result": "Transfer proceeded after retry; timeout window appeared to reset on second attempt.",
+    "evidence": {
+      "logs_ref": "EXEC-ATO-014-004:logs:timeout_reset_on_retry",
+      "timestamps": "2026-08-10T15:44:00Z"
+    }
+  }
+]

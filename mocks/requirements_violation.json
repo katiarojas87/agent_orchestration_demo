@@ -1,0 +1,15 @@
+{
+  "requirement_id": "REQ-ATO-014",
+  "status": "approved",
+  "derived_from": "INTAKE-2026-07-18-004",
+  "statement": "When a payment initiation immediately follows a change to the customer's registered device or phone number, the system should require additional authentication before execution.",
+  "acceptance_criteria": [
+    {
+      "id": "AC-1",
+      "text": "Transfer is held if a device/phone change occurred within the last 24 hours.",
+      "source_ref": ""
+    }
+  ],
+  "open_questions": [],
+  "possible_duplicates": []
+}
