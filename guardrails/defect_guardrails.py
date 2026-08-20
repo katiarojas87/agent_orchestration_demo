@@ -6,6 +6,7 @@ import re
 
 from pydantic import ValidationError
 
+from guardrails.results import GuardrailCheck, GuardrailResult, build_guardrail_result
 from models.schemas import Defect
 
 ID_ONLY_DUPLICATE_PATTERN = re.compile(r"^DEF-[\w-]+$")
@@ -57,15 +58,52 @@ def duplicate_of_includes_explanatory_note(defect: Defect) -> tuple[bool, str | 
     return True, None
 
 
-def validate_defect(defect: Defect) -> tuple[bool, list[str]]:
+def run_defect_guardrails(defect: Defect) -> GuardrailResult:
     """Run all defect guardrails on a validated Defect model."""
-    checks = [
-        status_is_needs_human_review(defect),
-        hypotheses_have_confidence_and_evidence(defect),
-        duplicate_of_includes_explanatory_note(defect),
-    ]
-    failures = [message for passed, message in checks if not passed and message]
-    return len(failures) == 0, failures
+    return build_guardrail_result(
+        [
+            ("status_is_needs_human_review", status_is_needs_human_review(defect)),
+            (
+                "hypotheses_have_confidence_and_evidence",
+                hypotheses_have_confidence_and_evidence(defect),
+            ),
+            (
+                "duplicate_of_includes_explanatory_note",
+                duplicate_of_includes_explanatory_note(defect),
+            ),
+        ]
+    )
+
+
+def run_defect_guardrails_raw(raw: dict[str, object]) -> GuardrailResult:
+    """Validate defect agent output and return structured check results."""
+    raw_failures = _validate_hypotheses_raw(raw)
+    if raw_failures:
+        checks = [
+            GuardrailCheck(
+                name="hypotheses_have_confidence_and_evidence",
+                passed=False,
+                detail=detail,
+            )
+            for detail in raw_failures
+        ]
+        return GuardrailResult(passed=False, checks=checks)
+
+    try:
+        defect = Defect.model_validate(raw)
+    except ValidationError as exc:
+        return GuardrailResult(
+            passed=False,
+            checks=[
+                GuardrailCheck(
+                    name="schema_validation",
+                    passed=False,
+                    detail=f"Defect schema validation failed: {exc.errors()[0]['msg']}",
+                )
+            ],
+        )
+
+    return run_defect_guardrails(defect)
 
 
 def _validate_hypotheses_raw(raw: dict[str, object]) -> list[str]:
@@ -96,15 +134,15 @@ def _validate_hypotheses_raw(raw: dict[str, object]) -> list[str]:
     return failures
 
 
+def validate_defect(defect: Defect) -> tuple[bool, list[str]]:
+    """Run all defect guardrails on a validated Defect model."""
+    result = run_defect_guardrails(defect)
+    failures = [check.detail for check in result.checks if not check.passed]
+    return result.passed, failures
+
+
 def validate_defect_output(raw: dict[str, object]) -> tuple[bool, list[str]]:
     """Validate defect agent output, including malformed hypothesis fields."""
-    failures = _validate_hypotheses_raw(raw)
-    if failures:
-        return False, failures
-
-    try:
-        defect = Defect.model_validate(raw)
-    except ValidationError as exc:
-        return False, [f"Defect schema validation failed: {exc.errors()[0]['msg']}"]
-
-    return validate_defect(defect)
+    result = run_defect_guardrails_raw(raw)
+    failures = [check.detail for check in result.checks if not check.passed]
+    return result.passed, failures

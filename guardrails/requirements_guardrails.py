@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 
+from guardrails.results import GuardrailResult, build_guardrail_result
 from models.schemas import Requirement
 
 NUMBER_PATTERN = re.compile(r"\d+")
@@ -63,11 +64,24 @@ def validate_requirement(
     raw_text: str,
 ) -> tuple[bool, list[str]]:
     """Run all requirements guardrails and collect failure messages."""
-    checks = [
-        status_is_draft(requirement),
-        acceptance_criteria_non_empty(requirement),
-        source_ref_is_substring_of_raw_text(requirement, raw_text),
-        ac_numbers_appear_in_source_ref(requirement),
-    ]
-    failures = [message for passed, message in checks if not passed and message]
-    return len(failures) == 0, failures
+    result = run_requirement_guardrails(requirement, raw_text)
+    failures = [check.detail for check in result.checks if not check.passed]
+    return result.passed, failures
+
+
+def run_requirement_guardrails(requirement: Requirement, raw_text: str) -> GuardrailResult:
+    """Run all requirements guardrails and return structured check results."""
+    return build_guardrail_result(
+        [
+            ("status_is_draft", status_is_draft(requirement)),
+            ("acceptance_criteria_non_empty", acceptance_criteria_non_empty(requirement)),
+            (
+                "source_ref_is_substring_of_raw_text",
+                source_ref_is_substring_of_raw_text(requirement, raw_text),
+            ),
+            (
+                "ac_numbers_appear_in_source_ref",
+                ac_numbers_appear_in_source_ref(requirement),
+            ),
+        ]
+    )

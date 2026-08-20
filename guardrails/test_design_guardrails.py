@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 
+from guardrails.results import GuardrailResult, build_guardrail_result
 from models.schemas import Requirement, TestScenario
 
 IBAN_PATTERN = re.compile(r"\b[A-Z]{2}\d{2}[A-Z0-9]{11,30}\b")
@@ -71,10 +72,60 @@ def validate_test_design(
     requirement: Requirement,
 ) -> tuple[bool, list[str]]:
     """Run all test design guardrails and collect failure messages."""
-    checks = [
-        acceptance_criteria_ids_exist(scenarios, requirement),
-        each_ac_has_positive_and_negative_coverage(scenarios, requirement),
-        test_data_spec_has_no_realistic_pii(scenarios),
-    ]
-    failures = [message for passed, message in checks if not passed and message]
-    return len(failures) == 0, failures
+    result = run_test_design_guardrails(scenarios, requirement)
+    failures = [check.detail for check in result.checks if not check.passed]
+    return result.passed, failures
+
+
+def run_test_design_guardrails(
+    scenarios: list[TestScenario],
+    requirement: Requirement,
+) -> GuardrailResult:
+    """Run all test design guardrails and return structured check results."""
+    return build_guardrail_result(
+        [
+            (
+                "acceptance_criteria_ids_exist",
+                acceptance_criteria_ids_exist(scenarios, requirement),
+            ),
+            (
+                "each_ac_has_positive_and_negative_coverage",
+                each_ac_has_positive_and_negative_coverage(scenarios, requirement),
+            ),
+            (
+                "test_data_spec_has_no_realistic_pii",
+                test_data_spec_has_no_realistic_pii(scenarios),
+            ),
+        ]
+    )
+
+
+def compute_coverage_gaps(
+    scenarios: list[TestScenario],
+    requirement: Requirement,
+) -> list[str]:
+    """List ACs missing positive or negative/edge test coverage."""
+    coverage: dict[str, set[str]] = {ac.id: set() for ac in requirement.acceptance_criteria}
+    for scenario in scenarios:
+        coverage.setdefault(scenario.acceptance_criteria_id, set()).add(scenario.type)
+
+    gaps: list[str] = []
+    for ac in requirement.acceptance_criteria:
+        types = coverage.get(ac.id, set())
+        if "positive" not in types:
+            gaps.append(f"{ac.id}: no positive test scenario")
+        if not ({"negative", "edge"} & types):
+            gaps.append(f"{ac.id}: no negative or edge test scenario")
+    return gaps
+
+
+def compute_clarification_needed(scenarios: list[TestScenario]) -> list[str]:
+    """Flag test scenarios whose preconditions may need human clarification."""
+    clarifications: list[str] = []
+    for scenario in scenarios:
+        if "T-" in scenario.test_data_spec and "exactly" in scenario.preconditions.lower():
+            clarifications.append(
+                f"{scenario.test_id}: boundary timing in preconditions may need "
+                "environment-specific clock configuration"
+            )
+    return clarifications

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import re
 
+from guardrails.results import GuardrailCheck, GuardrailResult, build_guardrail_result
 from models.schemas import TraceRecord
 
 from utils import load_store
@@ -109,10 +110,23 @@ def validate_documentation(
     requirement_id: str,
 ) -> tuple[bool, list[str]]:
     """Run all documentation guardrails and collect failure messages."""
-    checks = [
-        all_linked_tests_in_trace(trace, requirement_id),
-        unexecuted_tests_listed_in_gaps(trace, requirement_id),
-        narrative_status_matches_store(trace),
-    ]
-    failures = [message for passed, message in checks if not passed and message]
-    return len(failures) == 0, failures
+    result = run_documentation_guardrails(trace, requirement_id)
+    failures = [check.detail for check in result.checks if not check.passed]
+    return result.passed, failures
+
+
+def run_documentation_guardrails(trace: TraceRecord, requirement_id: str) -> GuardrailResult:
+    """Run all documentation guardrails and return structured check results."""
+    return build_guardrail_result(
+        [
+            (
+                "all_linked_tests_in_trace",
+                all_linked_tests_in_trace(trace, requirement_id),
+            ),
+            (
+                "unexecuted_tests_listed_in_gaps",
+                unexecuted_tests_listed_in_gaps(trace, requirement_id),
+            ),
+            ("narrative_status_matches_store", narrative_status_matches_store(trace)),
+        ]
+    )

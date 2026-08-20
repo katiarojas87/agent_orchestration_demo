@@ -34,6 +34,25 @@ python main.py --mode live --intake seed/app_incident.json --auto-approve
 
 The same `guardrails/requirements_guardrails.py` validates live model output.
 
+## Web UI
+
+Terminal 1 — API server:
+
+```bash
+source .venv/bin/activate
+uvicorn backend.main:app --reload --port 8000
+```
+
+Terminal 2 — frontend dev server:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Open http://localhost:5173. Use **Run (clean)** to walk the full pipeline, or **Run (violation)** at any gated stage to see which specific guardrail check fails.
+
 ## Architecture
 
 | Agent | Output store | Human gate |
