@@ -1,4 +1,4 @@
-# Tilda Agent Demo — Fraud Detection Requirements Pipeline
+# Agent Orchestration — Human-in-the-Loop Pipeline
 
 A four-agent Python prototype for drafting fraud-detection requirements, designing tests, triaging defects, and producing traceability reports. Phase 1 uses hand-written mock LLM fixtures so orchestration, Pydantic schemas, and guardrails can be proven without an API key.
 
